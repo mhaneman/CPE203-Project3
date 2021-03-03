@@ -28,19 +28,15 @@ public abstract class Entity
     {
         return this.images.get(this.imageIndex);
     }
-
     protected String getId() {
         return id;
     }
-
     protected Point getPosition() {
         return position;
     }
-
     protected void setPosition(Point position) {
         this.position = position;
     }
-
     public List<PImage> getImages() {
         return images;
     }
