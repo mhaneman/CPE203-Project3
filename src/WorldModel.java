@@ -18,6 +18,13 @@ final class WorldModel
    private static final int OCTO_ACTION_PERIOD = 5;
    private static final int OCTO_ANIMATION_PERIOD = 6;
 
+   private static final String C_KEY = "character";
+   private static final int C_NUM_PROPERTIES = 5;
+   private static final int C_ID = 1;
+   private static final int C_COL = 2;
+   private static final int C_ROW = 3;
+   private static final int C_ANIMATION_PERIOD = 4;
+
    private static final String OBSTACLE_KEY = "obstacle";
    private static final int OBSTACLE_NUM_PROPERTIES = 4;
    private static final int OBSTACLE_ID = 1;
@@ -51,7 +58,6 @@ final class WorldModel
    private static final int BGND_ROW = 3;
 
    private static final int FISH_REACH = 1;
-
    private static final int PROPERTY_KEY = 0;
 
 
@@ -95,21 +101,23 @@ final class WorldModel
       {
          switch (properties[PROPERTY_KEY])
          {
-         case BGND_KEY:
-            return parseBackground(properties, imageStore);
-         case OCTO_KEY:
-            return parseOcto(properties, imageStore);
-         case OBSTACLE_KEY:
-            return parseObstacle(properties, imageStore);
-         case FISH_KEY:
-            return parseFish(properties, imageStore);
-         case ATLANTIS_KEY:
-            return parseAtlantis(properties, imageStore);
-         case SGRASS_KEY:
-            return parseSgrass(properties, imageStore);
+            case BGND_KEY:
+               return parseBackground(properties, imageStore);
+            case OCTO_KEY:
+               return parseOcto(properties, imageStore);
+            case OBSTACLE_KEY:
+               return parseObstacle(properties, imageStore);
+            case FISH_KEY:
+               return parseFish(properties, imageStore);
+            case ATLANTIS_KEY:
+               return parseAtlantis(properties, imageStore);
+            case SGRASS_KEY:
+               return parseSgrass(properties, imageStore);
+
+            case C_KEY:
+               return parseCharacter(properties, imageStore);
          }
       }
-
       return false;
    }
 
@@ -148,8 +156,7 @@ final class WorldModel
       return properties.length == SGRASS_NUM_PROPERTIES;
    }
 
-   private boolean parseAtlantis(String[] properties,
-                                ImageStore imageStore)
+   private boolean parseAtlantis(String[] properties, ImageStore imageStore)
    {
       if (properties.length == ATLANTIS_NUM_PROPERTIES)
       {
@@ -163,8 +170,7 @@ final class WorldModel
       return properties.length == ATLANTIS_NUM_PROPERTIES;
    }
 
-   private boolean parseFish(String[] properties,
-                            ImageStore imageStore)
+   private boolean parseFish(String[] properties, ImageStore imageStore)
    {
       if (properties.length == FISH_NUM_PROPERTIES)
       {
@@ -179,8 +185,7 @@ final class WorldModel
       return properties.length == FISH_NUM_PROPERTIES;
    }
 
-   private boolean parseObstacle(String[] properties,
-                                ImageStore imageStore)
+   private boolean parseObstacle(String[] properties, ImageStore imageStore)
    {
       if (properties.length == OBSTACLE_NUM_PROPERTIES)
       {
@@ -195,8 +200,7 @@ final class WorldModel
       return properties.length == OBSTACLE_NUM_PROPERTIES;
    }
 
-   private boolean parseOcto(String[] properties,
-                            ImageStore imageStore)
+   private boolean parseOcto(String[] properties, ImageStore imageStore)
    {
       if (properties.length == OCTO_NUM_PROPERTIES)
       {
@@ -213,8 +217,22 @@ final class WorldModel
       return properties.length == OCTO_NUM_PROPERTIES;
    }
 
-   private boolean parseBackground(String[] properties,
-                                  ImageStore imageStore)
+   private boolean parseCharacter(String[] properties, ImageStore imageStore)
+   {
+      if (properties.length == C_NUM_PROPERTIES)
+      {
+         Point pt = new Point(Integer.parseInt(properties[C_COL]),
+                 Integer.parseInt(properties[C_ROW]));
+
+         Entity entity = new Character(properties[C_ID], pt, imageStore.getImageList(C_KEY), 0,
+                 Integer.parseInt(properties[C_ANIMATION_PERIOD]));
+         tryAddEntity(entity);
+      }
+
+      return properties.length == OCTO_NUM_PROPERTIES;
+   }
+
+   private boolean parseBackground(String[] properties, ImageStore imageStore)
    {
       if (properties.length == BGND_NUM_PROPERTIES)
       {

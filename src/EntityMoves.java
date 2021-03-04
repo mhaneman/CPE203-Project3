@@ -3,7 +3,7 @@ import processing.core.PImage;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class EntityMoves extends EntityAnimates
+public abstract class EntityMoves extends EntityAnimates implements PathingStrategy
 {
     public EntityMoves(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod) {
         super(id, position, images, actionPeriod, animationPeriod);
