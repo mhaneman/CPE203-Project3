@@ -1,5 +1,6 @@
 import processing.core.PImage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -8,9 +9,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class OctoFull extends EntityOcto {
-
-
+public class OctoFull extends EntityOcto
+{
     public OctoFull( String id, Point position, List<PImage> images,
                      int resourceLimit, int actionPeriod, int animationPeriod)
     {
@@ -49,14 +49,18 @@ public class OctoFull extends EntityOcto {
     {
     }
 
-    @Override
-    protected boolean _nextPosition(WorldModel worldModel, Point newPos, Optional<Entity> occupant)
+    private PathingStrategy strategy = new SingleStepPathingStrategy();
+    protected boolean generatePath(Point pos, Point goal, WorldModel world)
     {
-        return worldModel.isOccupied(newPos);
-    }
+        List<Point> points;
+        points = strategy.computePath(pos, goal,
+                p ->  (world.withinBounds(p) && !world.isOccupied(p)), EntityMoves::neighbors,
+                PathingStrategy.CARDINAL_NEIGHBORS);
 
-    @Override
-    public List<Point> computePath(Point start, Point end, Predicate<Point> canPassThrough, BiPredicate<Point, Point> withinReach, Function<Point, Stream<Point>> potentialNeighbors) {
-        return null;
+        if (points.size() == 0)
+            return false;
+
+        path.addAll(points);
+        return true;
     }
 }

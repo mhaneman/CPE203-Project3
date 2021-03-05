@@ -1,5 +1,6 @@
 import processing.core.PImage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -52,28 +53,18 @@ public class Crab extends EntityMoves {
         scheduler.unscheduleAllEvents(target);
     }
 
-    protected boolean _nextPosition(WorldModel worldModel, Point newPos, Optional<Entity> occupant)
+    private PathingStrategy strategy = new SingleStepPathingStrategy();
+    protected boolean generatePath(Point pos, Point goal, WorldModel world)
     {
-        return occupant.isPresent() && !(occupant.get() instanceof Fish);
-    }
+        List<Point> points;
+        points = strategy.computePath(pos, goal,
+                p ->  (world.withinBounds(p) && !world.isOccupied(p)), EntityMoves::neighbors,
+                PathingStrategy.CARDINAL_NEIGHBORS);
 
-    @Override
-    public List<Point> computePath(Point start, Point end, Predicate<Point> canPassThrough,
-                                   BiPredicate<Point, Point> withinReach, Function<Point,
-            Stream<Point>> potentialNeighbors)
-    {
-        /* Does not check withinReach.  Since only a single step is taken
-         * on each call, the caller will need to check if the destination
-         * has been reached.
-         */
-        return potentialNeighbors.apply(start)
-                .filter(canPassThrough)
-                .filter(pt ->
-                        !pt.equals(start)
-                                && !pt.equals(end)
-                                && Math.abs(end.x - pt.x) <= Math.abs(end.x - start.x)
-                                && Math.abs(end.y - pt.y) <= Math.abs(end.y - start.y))
-                .limit(1)
-                .collect(Collectors.toList());
+        if (points.size() == 0)
+            return false;
+
+        path.addAll(points);
+        return true;
     }
 }

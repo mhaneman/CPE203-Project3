@@ -15,6 +15,16 @@ public class Character extends EntityMoves{
     }
 
     @Override
+    protected Point nextPosition(Point destPos, WorldModel world) {
+        return null;
+    }
+
+    @Override
+    protected boolean generatePath(Point pos, Point goal, WorldModel world) {
+        return false;
+    }
+
+    @Override
     protected void executeActivity(WorldModel world, ImageStore imageStore, EventScheduler eventScheduler)
     {
         long nextPeriod = getActionPeriod();
@@ -22,19 +32,8 @@ public class Character extends EntityMoves{
     }
 
     @Override
-    protected boolean _nextPosition(WorldModel worldModel, Point newPos, Optional<Entity> occupant)
-    {
-        return true;
-    }
-
-    @Override
     protected void _moveTo(WorldModel world, Entity target, EventScheduler scheduler)
     {
 
-    }
-
-    @Override
-    public List<Point> computePath(Point start, Point end, Predicate<Point> canPassThrough, BiPredicate<Point, Point> withinReach, Function<Point, Stream<Point>> potentialNeighbors) {
-        return null;
     }
 }

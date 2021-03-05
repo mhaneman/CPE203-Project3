@@ -1,11 +1,13 @@
 import processing.core.PImage;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public abstract class EntityMoves extends EntityAnimates implements PathingStrategy
+public abstract class EntityMoves extends EntityAnimates
 {
-    public EntityMoves(String id, Point position, List<PImage> images, int actionPeriod, int animationPeriod) {
+    protected Queue<Point> path = new ArrayDeque<>();
+    public EntityMoves(String id, Point position,
+                       List<PImage> images, int actionPeriod,
+                       int animationPeriod) {
         super(id, position, images, actionPeriod, animationPeriod);
     }
 
@@ -18,31 +20,26 @@ public abstract class EntityMoves extends EntityAnimates implements PathingStrat
                 getAnimationPeriod());
     }
 
-    protected abstract boolean _nextPosition(WorldModel worldModel, Point newPos, Optional<Entity> occupant);
-
-    protected Point nextPosition(Point destPos, WorldModel worldModel)
+    protected Point nextPosition(Point destPos, WorldModel world)
     {
-        int horiz = Integer.signum(destPos.x - getPosition().x);
-        Point newPos = new Point(getPosition().x + horiz, getPosition().y);
+        if (path.isEmpty())
+            generatePath(this.getPosition(), destPos, world);
+        if (path.isEmpty())
+            return this.getPosition();
+        return path.remove();
+    }
+    protected abstract boolean generatePath(Point pos, Point goal, WorldModel world);
 
-        Optional<Entity> occupant = worldModel.getOccupant(newPos);
-
-        if (horiz == 0 || _nextPosition(worldModel, newPos, occupant))
-        {
-            int vert = Integer.signum(destPos.y - getPosition().y);
-            newPos = new Point(getPosition().x, getPosition().y + vert);
-            occupant = worldModel.getOccupant(newPos);
-
-            if (vert == 0 || _nextPosition(worldModel, newPos, occupant))
-            {
-                newPos = getPosition();
-            }
-        }
-
-        return newPos;
+    protected static boolean neighbors(Point p1, Point p2)
+    {
+        return p1.x+1 == p2.x && p1.y == p2.y ||
+                p1.x-1 == p2.x && p1.y == p2.y ||
+                p1.x == p2.x && p1.y+1 == p2.y ||
+                p1.x == p2.x && p1.y-1 == p2.y;
     }
 
     protected abstract void _moveTo(WorldModel world, Entity target, EventScheduler scheduler);
+
     protected boolean moveTo(WorldModel world, Entity target, EventScheduler scheduler)
     {
         if (this.getPosition().adjacent(target.getPosition()))
@@ -67,4 +64,5 @@ public abstract class EntityMoves extends EntityAnimates implements PathingStrat
             return false;
         }
     }
+
 }
